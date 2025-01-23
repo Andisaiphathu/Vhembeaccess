@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vhembe TVET College - Empowering Futures</title>
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="apply.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+        }
+        #map {
+            height: 500px;
+        }
+
+        .building-label {
+            background: none;
+            border: none;
+            box-shadow: none;
+            font-size: 12px;
+            font-weight: bold;
+            color: #000;
+            text-shadow: 
+                -1px -1px 0 #fff,
+                1px -1px 0 #fff,
+                -1px 1px 0 #fff,
+                1px 1px 0 #fff;
+        }
+
+        /* Add your existing styles here */
+        .section {
+    padding: 50px 0;
+    text-align: center;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+h2 {
+    font-size: 36px;
+    margin-bottom: 40px;
+}
+
+.courses-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: stretch; /* This will make all cards stretch to match the tallest one */
+}
+
+.course-card {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 300px; /* Adjusted from 250px to 300px for increased width */
+    min-height: 400px; /* Set a minimum height, allowing it to grow if needed */
+    padding: 20px;
+    margin: 15px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.course-card:hover {
+    transform: scale(1.05);
+}
+
+.course-icon {
+    font-size: 40px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.course-card h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.course-card p {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.course-card ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.course-card li {
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+.learn-more-btn {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.learn-more-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 60%;
+    text-align: left;
+}
+
+.close {
+    float: right;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: red;
+}
+
+#applyNowBtn {
+    background-color: #28a745;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#applyNowBtn:hover {
+    background-color: #218838;
+}
+        
+        /* Map-specific styles */
+        #search-box {
+            margin-bottom: 10px;
+        }
+        #location-input {
+            padding: 5px;
+            width: 200px;
+        }
+        #controls {
+            margin-top: 10px;
+        }
+        #controls button {
+            margin-right: 5px;
+        }
+        .leaflet-popup-content {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-hero-container">
+            <nav>
+                <a href="#" class="logo">
+                    <img src="images/images.png" alt="Vhembe TVET College Logo">
+                </a>
+                <ul class="menu">
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#courses">Courses</a></li>
+                    <li><a href="#campus">Campus Life</a></li>
+                    <li><a href="#admissions">Admissions</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="apply.html" class="cta-button">Apply Now</a></li>
+                    <li><a href="#" id="loginLink">Login</a></li>
+                </ul>
+                <button class="hamburger" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+    
+    <main>
+        <!-- Your existing content here -->
+        <main>
+            <div class="login-container" id="loginForm">
+                <span class="close-btn">&times;</span>
+                <form id="loginFormElement">
+                    <h2>User Login</h2>
+                    <div class="input-group">
+                        <input type="email" id="emailId" placeholder="Email" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="password" placeholder="Password" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="checkbox" id="rememberMe"> Remember me
+                    </div>
+                    <button type="submit" class="login-btn">Login</button>
+                    <a href="register.html" class="register-link">Register</a>
+                    <a href="forgot.html" class="forgot-password-link">Forgot Password?</a>
+                </form>
+            </div>
+        
+            <!-- Trigger to open Login Form -->
+            <a href="#" id="loginLink">Login</a>
+    
+            <section class="hero">
+                <div class="hero-content">
+                    <h1>Welcome to Vhembe TVET College</h1>
+                    <p>Empowering futures through quality education and skills development</p>
+                    <a href="#courses" class="cta-button">Explore Our Courses</a>
+                </div>
+            </section>
+        
+            <section id="about" class="section">
+                <div class="container">
+                    <h2>About Vhembe TVET College</h2>
+                    <div class="about-grid">
+                        <div class="about-text">
+                            <p>Vhembe TVET College is a leading institution committed to providing quality education and skills development. Our mission is to empower students with practical knowledge and skills that meet the demands of the modern workforce.</p>
+                            <p>With state-of-the-art facilities and experienced faculty, we offer a wide range of programs designed to prepare students for successful careers in various industries.</p>
+                        </div>
+                        <div class="about-image">
+                            <div class="image-container">
+                                <img src="images/vhembegate.jpg" alt="Vhembe TVET College Campus" />
+                            </div>
+                        </div>
+                        <div class="about-image">
+                            <div class="image-container">
+                                <img src="images/P06-Vhembe-DSC.webp" alt="Students in a workshop" />
+                            </div>
+                        </div>
+                        <div class="about-text">
+                            <h3>Our Values</h3>
+                            <ul>
+                                <li>Excellence in Education</li>
+                                <li>Innovation and Creativity</li>
+                                <li>Inclusivity and Diversity</li>
+                                <li>Community Engagement</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        
+            <section id="courses" class="section">
+                <div class="container">
+                    <h2>Our Courses</h2>
+                    <div class="courses-grid">
+                        <div class="course-card" data-course="engineering">
+                            <div class="course-icon">
+                                <i class="fas fa-cogs"></i>
+                            </div>
+                            <h3>Engineering Studies</h3>
+                            <p>Explore our range of engineering programs, including Mechanical, Electrical, and Civil Engineering.</p>
+                            <ul class="course-details" style="display: none;">
+                                <li>Mechanical Engineering</li>
+                                <li>Electrical Engineering</li>
+                                <li>Civil Engineering</li>
+                            </ul>
+                            <button class="learn-more-btn" data-course="engineering">Learn More</button>
+                        </div>
+                        <div class="course-card" data-course="business">
+                            <div class="course-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3>Business Studies</h3>
+                            <p>Develop your business acumen with our courses in Management, Accounting, and Entrepreneurship.</p>
+                            <ul class="course-details" style="display: none;">
+                                <li>Business Management</li>
+                                <li>Accounting</li>
+                                <li>Entrepreneurship</li>
+                            </ul>
+                            <button class="learn-more-btn" data-course="business">Learn More</button>
+                        </div>
+                        <div class="course-card" data-course="it">
+                            <div class="course-icon">
+                                <i class="fas fa-laptop-code"></i>
+                            </div>
+                            <h3>Information Technology</h3>
+                            <p>Stay ahead in the digital age with our cutting-edge IT and Computer Science programs.</p>
+                            <ul class="course-details" style="display: none;">
+                                <li>Software Development</li>
+                                <li>Network Administration</li>
+                                <li>Cybersecurity</li>
+                            </ul>
+                            <button class="learn-more-btn" data-course="it">Learn More</button>
+                        </div>
+                        <div class="course-card" data-course="hospitality">
+                            <div class="course-icon">
+                                <i class="fas fa-concierge-bell"></i>
+                            </div>
+                            <h3>Hospitality and Tourism</h3>
+                            <p>Prepare for a dynamic career in the hospitality industry with our specialized courses.</p>
+                            <ul class="course-details" style="display: none;">
+                                <li>Hotel Management</li>
+                                <li>Culinary Arts</li>
+                                <li>Tourism Studies</li>
+                            </ul>
+                            <button class="learn-more-btn" data-course="hospitality">Learn More</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        
+            <div id="courseModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2 id="modalTitle"></h2>
+                    <p id="modalDescription"></p>
+                    <h3>Key Features:</h3>
+                    <ul id="modalFeatures"></ul>
+                    <h3>Career Opportunities:</h3>
+                    <p id="modalCareers"></p>
+                    <a href="apply.html" id="applyNowBtn" class="btn">Apply Now</a>
+                </div>
+            </div>
+        
+            <section id="campus" class="section">
+                <div class="container">
+                    <h2>Campus Life</h2>
+                    <p>At Vhembe TVET College, we believe in providing a holistic educational experience. Our vibrant campus life offers:</p>
+                    <ul>
+                        <li>Student clubs and organizations</li>
+                        <li>Sports facilities and teams</li>
+                        <li>Cultural events and festivals</li>
+                        <li>Career development workshops</li>
+                        <li>Community outreach programs</li>
+                    </ul>
+                </div>
+            </section>
+        
+            <section id="admissions" class="section">
+                <div class="container">
+                    <h2>Admissions</h2>
+                    <p>Join our diverse community of learners. The admission process at Vhembe TVET College is designed to be straightforward and accessible.</p>
+                    <h3>Requirements:</h3>
+                    <ul>
+                        <li>Completed application form</li>
+                        <li>Certified copy of ID or passport</li>
+                        <li>Latest academic results</li>
+                        <li>Proof of residence</li>
+                    </ul>
+                    <p>For more information on admission requirements and deadlines, please contact our admissions office.</p>
+                </div>
+            </section>
+        
+            <section id="contact" class="section">
+                <div class="container">
+                    <h2>Contact Us</h2>
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="name">Name:</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message:</label>
+                            <textarea id="message" name="message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn">Send Message</button>
+                    </form>
+                </div>
+            </section>
+        
+        <h1>Vhembe TVET College Map</h1>
+
+        <!-- Search Box for Location Search -->
+        <div id="search-box">
+            <input type="text" id="location-input" placeholder="Enter a location" />
+            <button onclick="searchLocation()">Search</button>
+        </div>
+
+        <!-- Map container -->
+        <div id="map"></div>
+        
+        <div id="controls">
+            <button onclick="moveMap('left')">Move Left</button>
+            <button onclick="moveMap('right')">Move Right</button>
+            <button onclick="moveMap('up')">Move Up</button>
+            <button onclick="moveMap('down')">Move Down</button>
+        </div>
+    </main>
+    
+    <footer>
+        <!-- Your existing footer content -->
+            <div class="container">
+                <h3>Contact Us</h3>
+                <p>Stand No. 203, Unit A, Sibasa, Thulamela, Limpopo</p>
+                <p>Phone: +27 15 963 7000</p>
+                <p>Email: info@vhembecollege.edu.za</p>
+                <div class="socials">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+    </footer>
+    
+    <div id="notifications"></div>
+    
+    <div id="chat-widget" class="chat-widget">
+        <!-- Your existing chat widget content -->
+        <div id="chat-widget" class="chat-widget">
+            <button class="chat-toggle">
+                <i class="fas fa-comments"></i> Chat with us
+            </button>
+            <div id="chat-popup" class="chat-popup">
+                <div id="chat-messages"></div>
+                <div id="chat-input">
+                    <input type="text" id="user-message" placeholder="Type your message...">
+                    <button id="sendMessageBtn">Send</button>
+                </div>
+            </div>
+    </div>
+    
+    <!-- Leaflet JavaScript Library -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+            
+    <script>
+// Map initialization
+var southWest = L.latLng(-22.952, 30.470);
+        var northEast = L.latLng(-22.935, 30.495);
+        var bounds = L.latLngBounds(southWest, northEast);
+        var map = L.map('map', {
+            center: [-22.94279832612505, 30.482405229647945],
+            zoom: 17,
+            minZoom: 16,
+            maxZoom: 20,
+            maxBounds: bounds,
+            maxBoundsViscosity: 1.0
+        });
+
+        // Add Satellite layer (using Esri World Imagery)
+        var satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+        }).addTo(map);
+
+        // Add OpenStreetMap layer
+        var osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        });
+
+        // Current active layer
+        var currentLayer = 'satellite';
+
+        // Function to change map type
+        function changeMapType() {
+            var mapType = document.getElementById('map-type-select').value;
+            if (mapType === 'satellite' && currentLayer !== 'satellite') {
+                map.removeLayer(osmLayer);
+                map.addLayer(satelliteLayer);
+                currentLayer = 'satellite';
+            } else if (mapType === 'street' && currentLayer !== 'street') {
+                map.removeLayer(satelliteLayer);
+                map.addLayer(osmLayer);
+                currentLayer = 'street';
+            }
+        }
+
+        // Define all college buildings
+        var collegeBuildings = [
+            { name: "Main Administration", lat: -22.9435, lng: 30.4822 },
+            { name: "Library", lat: -22.9425, lng: 30.4818 },
+            { name: "Auditorium", lat: -22.9432, lng: 30.4820 },
+            { name: "Student Center", lat: -22.9427, lng: 30.4823 },
+            { name: "Cafeteria", lat: -22.9433, lng: 30.4819 },
+            { name: "Sports Complex", lat: -22.9440, lng: 30.4825 },
+            { name: "Engineering Block", lat: -22.9422, lng: 30.4830 },
+            { name: "IT Center", lat: -22.9426, lng: 30.4814 },
+            { name: "Science Labs", lat: -22.9428, lng: 30.4816 },
+            { name: "Business Studies", lat: -22.9430, lng: 30.4821 },
+            { name: "Health Sciences", lat: -22.9436, lng: 30.4817 },
+            { name: "Arts & Culture", lat: -22.9429, lng: 30.4824 },
+            { name: "Workshop A", lat: -22.9423, lng: 30.4828 },
+            { name: "Workshop B", lat: -22.9424, lng: 30.4829 },
+            { name: "Lecture Hall 1", lat: -22.9431, lng: 30.4815 },
+            { name: "Lecture Hall 2", lat: -22.9432, lng: 30.4816 },
+            { name: "Lecture Hall 3", lat: -22.9433, lng: 30.4817 },
+            { name: "Student Services", lat: -22.9434, lng: 30.4823 },
+            { name: "Security Office", lat: -22.9421, lng: 30.4812 },
+            { name: "Parking Lot A", lat: -22.9438, lng: 30.4810 },
+            { name: "Parking Lot B", lat: -22.9439, lng: 30.4820 },
+            { name: "Green Space", lat: -22.9429, lng: 30.4828 },
+            { name: "Solar Farm", lat: -22.9420, lng: 30.4835 },
+            { name: "Maintenance", lat: -22.9437, lng: 30.4813 },
+            { name: "Bookstore", lat: -22.9431, lng: 30.4822 }
+        ];
+
+        // Create a feature group for building labels
+        var buildingLabels = L.featureGroup();
+
+        // Add labels and markers for college buildings
+        collegeBuildings.forEach(function(building) {
+            var label = L.divIcon({
+                className: 'building-label',
+                html: building.name,
+                iconSize: [100, 20],
+                iconAnchor: [50, 10]
+            });
+            
+            var marker = L.marker([building.lat, building.lng], {
+                icon: L.divIcon({
+                    className: 'fa-icon',
+                    html: '<i class="fas fa-building"></i>',
+                    iconSize: [20, 20],
+                    iconAnchor: [10, 10]
+                })
+            }).addTo(map);
+
+            marker.bindPopup("<b>" + building.name + "</b>");
+            
+            L.marker([building.lat, building.lng], { icon: label })
+                .addTo(buildingLabels);
+        });
+
+        buildingLabels.addTo(map);
+
+        // Variable to store the circle overlay
+        var searchCircle;
+
+        // Function to search for a location
+        function searchLocation() {
+            var location = document.getElementById('location-input').value.toLowerCase();
+            var found = false;
+            
+            // Remove existing search circle if any
+            if (searchCircle) {
+                map.removeLayer(searchCircle);
+            }
+            
+            // Search for Vhembe TVET College
+            if (location.includes("vhembe") || location.includes("tvet") || location.includes("college")) {
+                var collegeCenter = [-22.94279832612505, 30.482405229647945]; // Center of the college
+                map.flyTo(collegeCenter, 17, {
+                    duration: 1.5,
+                    easeLinearity: 0.25
+                });
+                searchCircle = L.circle(collegeCenter, {
+                    color: 'red',
+                    fillColor: '#f03',
+                    fillOpacity: 0.3,
+                    radius: 250
+                }).addTo(map);
+                found = true;
+            } else {
+                // Search for individual buildings
+                collegeBuildings.forEach(function(building) {
+                    if (building.name.toLowerCase().includes(location)) {
+                        map.flyTo([building.lat, building.lng], 19, {
+                            duration: 1.5,
+                            easeLinearity: 0.25
+                        });
+                        searchCircle = L.circle([building.lat, building.lng], {
+                            color: 'red',
+                            fillColor: '#f03',
+                            fillOpacity: 0.3,
+                            radius: 30
+                        }).addTo(map);
+                        found = true;
+                    }
+                });
+            }
+            
+            if (!found) {
+                alert('Location not found. Please try another search term.');
+            }
+        }
+
+        // Add event listener for the Enter key in the search input
+        document.getElementById('location-input').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                searchLocation();
+            }
+        });
+
+        // Function to move the map
+        function moveMap(direction) {
+            var center = map.getCenter();
+            var offset = 0.001;
+            var newLat = center.lat;
+            var newLng = center.lng;
+            switch(direction) {
+                case 'left': newLng -= offset; break;
+                case 'right': newLng += offset; break;
+                case 'up': newLat += offset; break;
+                case 'down': newLat -= offset; break;
+            }
+            map.panTo([newLat, newLng]);
+        }
+
+        // Add scale control
+        L.control.scale().addTo(map);
+
+
+// Your existing JavaScript code continues here
+
+// Hamburger menu functionality for responsive design
+document.querySelector('.hamburger').addEventListener('click', function() {
+    const menu = document.querySelector('.menu');
+    menu.classList.toggle('active');
+    this.classList.toggle('active');
+});
+
+// Initialize tooltips for course cards
+document.querySelectorAll('.course-card').forEach(card => {
+    card.addEventListener('mouseenter', function() {
+        this.querySelector('.course-details').style.display = 'block';
+    });
+    card.addEventListener('mouseleave', function() {
+        this.querySelector('.course-details').style.display = 'none';
+    });
+});
+
+// Smooth scrolling for navigation links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+    });
+});
+
+// Form validation for contact form
+document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const message = document.getElementById('message').value;
+    
+    if (name && email && message) {
+        // Here you would typically send the form data to a server
+        console.log('Contact form submitted by: ${name}, ${email}');
+        alert('Thank you for your message. We will get back to you soon!');
+        this.reset();
+    } else {
+        alert('Please fill in all fields.');
+    }
+});
+
+// Chat widget functionality
+// Chat widget functionality
+const chatToggle = document.querySelector('.chat-toggle');
+const chatPopup = document.getElementById('chat-popup');
+const chatMessages = document.getElementById('chat-messages');
+const userMessageInput = document.getElementById('user-message');
+const sendMessageBtn = document.getElementById('sendMessageBtn');
+
+// Predefined bot responses
+const botResponses = {
+    greeting: [
+        "Hello! Welcome to Vhembe TVET College. How can I assist you today?",
+        "Hi there! I'm here to help with any questions about Vhembe TVET College. What would you like to know?"
+    ],
+    courses: [
+        "We offer a wide range of courses including Engineering, Business Studies, Information Technology, and Hospitality. Which field are you interested in?",
+        "Our popular courses include Mechanical Engineering, Business Management, Software Development, and Hotel Management. Would you like more information on any of these?"
+    ],
+    admissions: [
+        "For admissions, you'll need a completed application form, certified copy of ID, latest academic results, and proof of residence. Is there anything specific you'd like to know about the admission process?",
+        "The admission process is straightforward. You can find the application form on our website. Do you have any questions about eligibility or application deadlines?"
+    ],
+    campus: [
+        "Our campus offers modern facilities including a library, computer labs, workshops, and sports facilities. Is there a particular aspect of campus life you'd like to know more about?",
+        "Campus life at Vhembe TVET College is vibrant with various clubs, sports teams, and cultural events. What aspects of student life interest you most?"
+    ],
+    contact: [
+        "You can contact us at +27 15 963 7000 or email info@vhembecollege.edu.za. Would you like the physical address of our campus?",
+        "Our main campus is located at Stand No. 203, Unit A, Sibasa, Thulamela, Limpopo. Is there a specific department you'd like to get in touch with?"
+    ],
+    default: [
+        "I'm not sure I understand. Could you please rephrase your question?",
+        "I'm here to help with information about Vhembe TVET College. Can you be more specific about what you'd like to know?"
+    ]
+};
+
+// Function to get a random response from a category
+function getRandomResponse(category) {
+    const responses = botResponses[category] || botResponses.default;
+    return responses[Math.floor(Math.random() * responses.length)];
+}
+
+// Function to determine the response category based on user input
+function getResponseCategory(message) {
+    message = message.toLowerCase();
+    if (message.includes('hi') || message.includes('hello') || message.includes('hey')) {
+        return 'greeting';
+    } else if (message.includes('course') || message.includes('study') || message.includes('program')) {
+        return 'courses';
+    } else if (message.includes('admit') || message.includes('apply') || message.includes('application')) {
+        return 'admissions';
+    } else if (message.includes('campus') || message.includes('facility') || message.includes('accommodation')) {
+        return 'campus';
+    } else if (message.includes('contact') || message.includes('phone') || message.includes('email') || message.includes('address')) {
+        return 'contact';
+    } else {
+        return 'default';
+    }
+}
+
+chatToggle.addEventListener('click', function() {
+    chatPopup.style.display = chatPopup.style.display === 'none' || chatPopup.style.display === '' ? 'block' : 'none';
+});
+
+function sendMessage() {
+    const message = userMessageInput.value.trim();
+    if (message) {
+        appendMessage('You', message);
+        userMessageInput.value = '';
+        
+        // Get bot response
+        const responseCategory = getResponseCategory(message);
+        const botResponse = getRandomResponse(responseCategory);
+        
+        // Simulate a delay before bot responds
+        setTimeout(() => {
+            appendMessage('Bot', botResponse);
+        }, 1000);
+    }
+}
+
+sendMessageBtn.addEventListener('click', sendMessage);
+
+userMessageInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        sendMessage();
+    }
+});
+
+function appendMessage(sender, message) {
+    const messageElement = document.createElement('div');
+    messageElement.className = 'chat-message';
+    messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
+    chatMessages.appendChild(messageElement);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Initial greeting when chat is opened
+chatToggle.addEventListener('click', function() {
+    if (chatPopup.style.display === 'none' || chatPopup.style.display === '') {
+        setTimeout(() => {
+            appendMessage('Bot', getRandomResponse('greeting'));
+        }, 500);
+    }
+});
+// Function to show notifications
+function showNotification(message) {
+    const notifications = document.getElementById('notifications');
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+    notifications.appendChild(notification);
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+// Handle DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM fully loaded and parsed');
+});
+
+// Learn More Modal Functionality
+
+// Define course data
+const coursesData = {
+    engineering: {
+        title: "Engineering Studies",
+        description: "Our Engineering programs are designed to equip students with practical skills in various fields of engineering, including Mechanical, Electrical, and Civil Engineering.",
+        features: [
+            "Hands-on training",
+            "Industry-aligned curriculum",
+            "Experienced faculty"
+        ],
+        careers: "Graduates can pursue careers as mechanical engineers, civil engineers, electrical engineers, and more."
+    },
+    business: {
+        title: "Business Studies",
+        description: "Our Business Studies programs focus on developing essential skills for the business world, including management, finance, and marketing.",
+        features: [
+            "Real-world case studies",
+            "Internship opportunities",
+            "Networking events"
+        ],
+        careers: "Graduates can work in various fields, including finance, marketing, and management."
+    },
+    it: {
+        title: "Information Technology",
+        description: "Stay ahead in the digital age with our cutting-edge IT and Computer Science programs.",
+        features: [
+            "Software Development",
+            "Network Administration",
+            "Cybersecurity"
+        ],
+        careers: "Graduates can pursue careers as software developers, network administrators, cybersecurity specialists, and more."
+    },
+    hospitality: {
+        title: "Hospitality and Tourism",
+        description: "Prepare for a dynamic career in the hospitality industry with our specialized courses.",
+        features: [
+            "Hotel Management",
+            "Culinary Arts",
+            "Tourism Studies"
+        ],
+        careers: "Graduates can work in hotels, restaurants, travel agencies, and various tourism-related fields."
+    }
+};
+
+// Login form functionality
+// Show login form when the login link is clicked
+document.getElementById('loginLink').addEventListener('click', function (e) {
+            e.preventDefault();
+            document.getElementById('loginForm').style.display = 'block';
+        });
+
+        // Hide the login form when the close button is clicked
+        document.querySelector('.close-btn').addEventListener('click', function () {
+            document.getElementById('loginForm').style.display = 'none';
+        });
+
+        // Handle form submission
+        document.getElementById('loginFormElement').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const email = document.getElementById('emailId').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const rememberMe = document.getElementById('rememberMe').checked;
+
+            // Check if email and password are provided
+            if (!email || !password) {
+                alert('Please fill in both email and password.');
+                return;
+            }
+
+            // Redirect to the dashboard page
+            window.location.href = "login.html";
+
+            console.log(`Login attempt with email: ${email}, Remember me: ${rememberMe}`);
+        });
+
+        // Close the login form when clicking outside of it
+        window.addEventListener('click', function (e) {
+            const loginForm = document.getElementById('loginForm');
+            if (e.target === loginForm) {
+                loginForm.style.display = 'none';
+            }
+        });
+
+// Modal elements
+const courseModal = document.getElementById("courseModal");
+const modalTitle = document.getElementById("modalTitle");
+const modalDescription = document.getElementById("modalDescription");
+const modalFeatures = document.getElementById("modalFeatures");
+const modalCareers = document.getElementById("modalCareers");
+
+// Add event listeners to "Learn More" buttons
+document.querySelectorAll(".learn-more-btn").forEach(button => {
+    button.addEventListener("click", function() {
+        const courseKey = this.getAttribute("data-course");
+        const course = coursesData[courseKey];
+        
+        if (course) {
+            modalTitle.textContent = course.title;
+            modalDescription.textContent = course.description;
+            // Fixed this line to use backticks
+            modalFeatures.innerHTML = course.features.map(feature => `<li>${feature}</li>`).join("");
+
+            modalCareers.textContent = course.careers;
+            courseModal.style.display = "block";
+        } else {
+            alert("Course details not found.");
+        }
+    });
+});
+
+// Close modal functionality
+document.querySelector(".close").addEventListener("click", function() {
+    courseModal.style.display = "none";
+});
+
+// Close modal when clicking outside of it
+window.addEventListener("click", function(event) {
+    if (event.target === courseModal) {
+        courseModal.style.display = "none";
+    }
+});
+    </script>
+</body>
+</html>

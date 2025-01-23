@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply Now - Vhembe TVET College</title>
+    <link rel="stylesheet" href="apply.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Vhembe TVET College Application Form</h1>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <form id="applicationForm">
+                <div class="form-group">
+                    <label for="fullName">Full Name:</label>
+                    <input type="text" id="fullName" name="fullName" required>
+                    <div class="error" id="fullNameError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                    <div class="error" id="emailError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone:</label>
+                    <input type="tel" id="phone" name="phone" required>
+                    <div class="error" id="phoneError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="program">Program of Interest:</label>
+                    <select id="program" name="program" required>
+                        <option value="">Select a program</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Business">Business</option>
+                        <option value="IT">Information Technology</option>
+                        <option value="Hospitality">Hospitality</option>
+                    </select>
+                    <div class="error" id="programError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="startDate">Preferred Start Date:</label>
+                    <input type="date" id="startDate" name="startDate" required>
+                    <div class="error" id="startDateError"></div>
+                </div>
+                <button type="submit">Submit Application</button>
+            </form>
+        </div>
+    </main>
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Vhembe TVET College. All Rights Reserved.</p>
+        </div>
+    </footer>
+    <script>
+        document.getElementById('applicationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (validateForm()) {
+                alert('Thank you for your application! We will contact you soon.');
+                this.reset();
+            }
+        });
+
+        function validateForm() {
+            let isValid = true;
+            const fullName = document.getElementById('fullName');
+            const email = document.getElementById('email');
+            const phone = document.getElementById('phone');
+            const program = document.getElementById('program');
+            const startDate = document.getElementById('startDate');
+
+            // Validate Full Name
+            if (fullName.value.trim() === '') {
+                showError('fullNameError', 'Full Name is required');
+                isValid = false;
+            } else {
+                clearError('fullNameError');
+            }
+
+            // Validate Email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.value)) {
+                showError('emailError', 'Please enter a valid email address');
+                isValid = false;
+            } else {
+                clearError('emailError');
+            }
+
+            // Validate Phone
+            const phoneRegex = /^\d{10}$/;
+            if (!phoneRegex.test(phone.value)) {
+                showError('phoneError', 'Please enter a valid 10-digit phone number');
+                isValid = false;
+            } else {
+                clearError('phoneError');
+            }
+
+            // Validate Program
+            if (program.value === '') {
+                showError('programError', 'Please select a program');
+                isValid = false;
+            } else {
+                clearError('programError');
+            }
+
+            // Validate Start Date
+            if (startDate.value === '') {
+                showError('startDateError', 'Please select a start date');
+                isValid = false;
+            } else {
+                clearError('startDateError');
+            }
+
+            return isValid;
+        }
+
+        function showError(id, message) {
+            document.getElementById(id).textContent = message;
+        }
+
+        function clearError(id) {
+            document.getElementById(id).textContent = '';
+        }
+    </script>
+</body>
+</html>

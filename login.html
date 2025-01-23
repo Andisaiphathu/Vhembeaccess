@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vhembe TVET College - Student Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f0f4f8;
+        }
+
+        header {
+            background-color: #1a5f7a;
+            color: #fff;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 50px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 1rem;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        main {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .dashboard-widgets {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .widget {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 1.5rem;
+            width: 48%;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .widget:hover {
+            transform: translateY(-5px);
+        }
+
+        .course-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .course-card {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+            margin-top: 1rem;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #studentAvatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin-right: 2rem;
+            object-fit: cover;
+            border: 4px solid #1a5f7a;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1rem;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        #logoutBtn {
+            background-color: #f44336;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        #logoutBtn:hover {
+            background-color: #d32f2f;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: #4caf50;
+            width: 0;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4caf50;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+            z-index: 1000;
+            animation: fadeIn 0.5s, fadeOut 0.5s 2.5s;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        @keyframes fadeOut {
+            from {opacity: 1;}
+            to {opacity: 0;}
+        }
+
+        .theme-switch {
+            position: fixed;
+            bottom: 60px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .theme-switch input {
+            display: none;
+        }
+
+        .theme-switch label {
+            cursor: pointer;
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .dark-theme {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+        }
+
+        .dark-theme .widget,
+        .dark-theme .course-card,
+        .dark-theme .profile-info {
+            background-color: #34495e;
+            color: #ecf0f1;
+        }
+
+        .dark-theme header {
+            background-color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="images/images.png" alt="Vhembe TVET College Logo">
+            </div>
+            <ul class="nav-links">
+                <li><a href="#dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="#courses"><i class="fas fa-book"></i> My Courses</a></li>
+                <li><a href="#profile"><i class="fas fa-user"></i> Profile</a></li>
+                <li>
+                    <a href="index.html" id="logoutBtn" class="logout-link">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+                
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="dashboard" class="dashboard">
+            <h1>Welcome, <span id="studentName">Student</span>!</h1>
+            <div class="dashboard-widgets">
+                <div class="widget">
+                    <h3><i class="fas fa-bullhorn"></i> Announcements</h3>
+                    <ul id="announcements"></ul>
+                </div>
+                <div class="widget">
+                    <h3><i class="fas fa-calendar-alt"></i> Upcoming Deadlines</h3>
+                    <ul id="deadlines"></ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="courses" class="courses">
+            <h2><i class="fas fa-graduation-cap"></i> My Courses</h2>
+            <div id="courseList" class="course-list"></div>
+        </section>
+
+        <section id="profile" class="profile">
+            <h2><i class="fas fa-id-card"></i> Student Profile</h2>
+            <div class="profile-info">
+                <img src="images/default-avatar.png" alt="Student Avatar" id="studentAvatar">
+                <div>
+                    <p><strong>Name:</strong> <span id="profileName"></span></p>
+                    <p><strong>Student ID:</strong> <span id="studentId"></span></p>
+                    <p><strong>Email:</strong> <span id="studentEmail"></span></p>
+                    <p><strong>Program:</strong> <span id="studentProgram"></span></p>
+                    <button id="editProfileBtn" style="margin-top: 10px;">Edit Profile</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Vhembe TVET College. All rights reserved.</p>
+    </footer>
+
+    <div class="notification" id="notification"></div>
+
+    <div class="theme-switch">
+        <input type="checkbox" id="themeToggle">
+        <label for="themeToggle"><i class="fas fa-moon"></i></label>
+    </div>
+
+    <script>
+        // Mock student data (replace with actual data fetching in a real application)
+        const studentData = {
+            name: "",
+            id: "",
+            email: "@student.vhembecollege.edu.za",
+            program: "Information Technology",
+            courses: [
+                { name: "Web Development", code: "WD101", grade: "A-", progress: 75 },
+                { name: "Database Management", code: "DB201", grade: "B+", progress: 60 },
+                { name: "Network Security", code: "NS301", grade: "A", progress: 90 }
+            ]
+        };
+        
+        // Mock announcements and deadlines
+        const announcements = [
+            "Welcome to the new semester!",
+            "Library hours extended during exam week",
+            "Career fair next month - prepare your resumes!"
+        ];
+        
+        const deadlines = [
+            "Web Development Project - Due: 15 May 2024",
+            "Database Midterm Exam - Date: 22 May 2024",
+            "Network Security Assignment - Due: 30 May 2024"
+        ];
+        
+        // Function to populate student information
+        function populateStudentInfo() {
+            document.getElementById('studentName').textContent = studentData.name;
+            document.getElementById('profileName').textContent = studentData.name;
+            document.getElementById('studentId').textContent = studentData.id;
+            document.getElementById('studentEmail').textContent = studentData.email;
+            document.getElementById('studentProgram').textContent = studentData.program;
+        }
+        
+        // Function to populate course list
+        function populateCourses() {
+            const courseList = document.getElementById('courseList');
+            studentData.courses.forEach(course => {
+                const courseCard = document.createElement('div');
+                courseCard.className = 'course-card';
+                courseCard.innerHTML = `
+                    <h3>${course.name}</h3>
+                    <p>Code: ${course.code}</p>
+                    <p>Grade: ${course.grade}</p>
+                    <p>Progress: ${course.progress}%</p>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: ${course.progress}%"></div>
+                    </div>
+                `;
+                courseList.appendChild(courseCard);
+            });
+        }
+        
+        // Function to populate announcements
+        function populateAnnouncements() {
+            const announcementsList = document.getElementById('announcements');
+            announcements.forEach(announcement => {
+                const li = document.createElement('li');
+                li.textContent = announcement;
+                announcementsList.appendChild(li);
+            });
+        }
+        
+        // Function to populate deadlines
+        function populateDeadlines() {
+            const deadlinesList = document.getElementById('deadlines');
+            deadlines.forEach(deadline => {
+                const li = document.createElement('li');
+                li.textContent = deadline;
+                deadlinesList.appendChild(li);
+            });
+        }
+        
+        // Function to show notification
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Event listener for logout button
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            showNotification('Logout successful!');
+            // In a real application, you would handle the logout process here
+        });
+
+        
+        // Event listener for edit profile button
+        document.getElementById('editProfileBtn').addEventListener('click', function() {
+            showNotification('Profile edit feature coming soon!');
+        });
+        
+        // Event listener for theme toggle
+        document.getElementById('themeToggle').addEventListener('change', function() {
+            document.body.classList.toggle('dark-theme');
+            const themeIcon = document.querySelector('.theme-switch label i');
+            themeIcon.classList.toggle('fa-moon');
+            themeIcon.classList.toggle('fa-sun');
+        });
+        
+        // Initialize the page
+        function init() {
+            populateStudentInfo();
+            populateCourses();
+            populateAnnouncements();
+            populateDeadlines();
+        }
+        
+        // Run initialization when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
